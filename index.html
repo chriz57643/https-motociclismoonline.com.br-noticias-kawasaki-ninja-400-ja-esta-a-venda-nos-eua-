@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compartilhar Localização</title>
+    <script>
+        function obterLocalizacao() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(mostrarPosicao, mostrarErro);
+            } else {
+                alert("Geolocalização não é suportada por este navegador.");
+            }
+        }
+
+        function mostrarPosicao(posicao) {
+            const latitude = posicao.coords.latitude;
+            const longitude = posicao.coords.longitude;
+            document.getElementById("localizacao").innerHTML = 
+                "Latitude: " + latitude + "<br>Longitude: " + longitude;
+
+            // Aqui você pode enviar a localização para um servidor ou armazená-la
+            // Exemplo: enviar para um servidor usando fetch ou XMLHttpRequest
+        }
+
+        function mostrarErro(erro) {
+            switch(erro.code) {
+                case erro.PERMISSION_DENIED:
+                    alert("Usuário negou a solicitação de Geolocalização.");
+                    break;
+                case erro.POSITION_UNAVAILABLE:
+                    alert("Localização indisponível.");
+                    break;
+                case erro.TIMEOUT:
+                    alert("A solicitação de localização expirou.");
+                    break;
+                case erro.UNKNOWN_ERROR:
+                    alert("Um erro desconhecido ocorreu.");
+                    break;
+            }
+        }
+    </script>
+</head>
+<body onload="obterLocalizacao()">
+    <h1>Compartilhar Localização</h1>
+    <p id="localizacao">Obtendo localização...</p>
+</body>
+</html>
