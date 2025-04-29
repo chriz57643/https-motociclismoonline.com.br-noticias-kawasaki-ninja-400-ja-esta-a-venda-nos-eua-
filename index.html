@@ -3,46 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compartilhar Localização</title>
+    <title>Localização do Usuário</title>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Localização do Usuário</h1>
+    <div id="map"></div>
+
     <script>
-        function obterLocalizacao() {
+        function initMap() {
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(mostrarPosicao, mostrarErro);
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const userLocation = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    const map = new google.maps.Map(document.getElementById("map"), {
+                        zoom: 15,
+                        center: userLocation
+                    });
+
+                    const marker = new google.maps.Marker({
+                        position: userLocation,
+                        map: map
+                    });
+                }, function() {
+                    handleLocationError(true);
+                });
             } else {
-                alert("Geolocalização não é suportada por este navegador.");
+                handleLocationError(false);
             }
         }
 
-        function mostrarPosicao(posicao) {
-            const latitude = posicao.coords.latitude;
-            const longitude = posicao.coords.longitude;
-            document.getElementById("localizacao").innerHTML = 
-                "Latitude: " + latitude + "<br>Longitude: " + longitude;
-
-            // Aqui você pode enviar a localização para um servidor ou armazená-la
-            // Exemplo: enviar para um servidor usando fetch ou XMLHttpRequest
-        }
-
-        function mostrarErro(erro) {
-            switch(erro.code) {
-                case erro.PERMISSION_DENIED:
-                    alert("Usuário negou a solicitação de Geolocalização.");
-                    break;
-                case erro.POSITION_UNAVAILABLE:
-                    alert("Localização indisponível.");
-                    break;
-                case erro.TIMEOUT:
-                    alert("A solicitação de localização expirou.");
-                    break;
-                case erro.UNKNOWN_ERROR:
-                    alert("Um erro desconhecido ocorreu.");
-                    break;
-            }
+        function handleLocationError(browserHasGeolocation) {
+            alert(browserHasGeolocation ?
+                "Erro: O serviço de geolocalização falhou." :
+                "Erro: Seu navegador não suporta geolocalização.");
         }
     </script>
-</head>
-<body onload="obterLocalizacao()">
-    <h1>Compartilhar Localização</h1>
-    <p id="localizacao">Obtendo localização...</p>
+
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+    </script>
 </body>
 </html>
